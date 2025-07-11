@@ -49,9 +49,9 @@ void kprintf(const char *fmt, ...) {
                 }
 
                 case 'x': {
-                    unsigned value = va_arg(vargs, unsigned);
+                    uint64_t value = va_arg(vargs, unsigned);
                     for (int i = 16; i >= 0; i--) {
-                        unsigned nibble = (value >> (i*4)) & 0xf;
+                        uint64_t nibble = (value >> (i*4)) & 0xf;
                         uartPutc("0123456789abcdef"[nibble]);
                     }
                 }

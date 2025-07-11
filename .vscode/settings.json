@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "**/project.sigasi": "jsonc",
+        "**/.sigasi/**/compilation.log": "shellscript",
+        "**/.sigasi/**/compilation.plan": "json",
+        "cstdint": "c",
+        "compare": "c",
+        "format": "c"
+    }
+}

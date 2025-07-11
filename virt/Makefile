@@ -1,7 +1,7 @@
 # Toolchain
 CC := aarch64-none-elf-gcc
 
-SRC := boot.S main.c uart.c memory.c string.c kprintf.c trapHandlerC.c trapHandlerS.S vectors.S
+SRC := boot.S main.c uart.c memory.c string.c kprintf.c trapHandlerC.c trapHandlerS.S vectors.S heap.c common.c
 BUILD := build
 OBJS := $(patsubst %.S,$(BUILD)/%.o,$(filter %.S,$(SRC))) \
         $(patsubst %.c,$(BUILD)/%.o,$(filter %.c,$(SRC)))
@@ -33,7 +33,7 @@ $(ELF): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS)
 
 run: $(ELF)
-	$(QEMU) $(QEMU_MACHINE) -kernel $(ELF) -cpu cortex-a72
+	$(QEMU) $(QEMU_MACHINE) -kernel $(ELF) -cpu cortex-a72 -m 2048M
 
 clean:
 	rm -rf $(BUILD)

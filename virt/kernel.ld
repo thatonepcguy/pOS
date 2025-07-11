@@ -34,4 +34,10 @@ SECTIONS {
         . += 128 * 1024; /* 128 KiB */ 
         __stack_top = .;
     }
+
+    .heap : ALIGN(4096) {
+        __heap = .;
+        . += 16*1024*1024; /* 16 MB*/
+        __heap_end = .;
+    }
 }

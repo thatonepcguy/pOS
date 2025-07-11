@@ -1,6 +1,6 @@
 #pragma once
 // c standard library stuff
-typedef int bool;
+typedef unsigned char bool;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
@@ -10,9 +10,9 @@ typedef signed short int16_t;
 typedef signed int int32_t;
 typedef signed long long int64_t;
 
-typedef uint32_t size_t;
-typedef uint32_t paddr_t;
-typedef uint32_t vaddr_t;
+typedef uint64_t size_t;
+typedef uint64_t paddr_t;
+typedef uint64_t vaddr_t;
 
 #define true 1;
 #define false 0;
@@ -41,3 +41,7 @@ typedef uint32_t vaddr_t;
 #define dmb() __asm__ __volatile__("dmb sy")
 #define dsb() __asm__ __volatile__("dsb sy")
 #define isb() __asm__ __volatile__("isb")
+
+size_t bitscan(size_t x);
+size_t pow2RoundUp(size_t x);
+size_t pow(size_t x, size_t power);

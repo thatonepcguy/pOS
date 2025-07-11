@@ -41,7 +41,7 @@ void uartInit(void) {
     
     read = mmioRead(UART0_LCR_H);
     read &= ~(UART0_LCR_H_WLEN8 | UART0_LCR_H_FEN);
-    read |= UART0_LCR_H_WLEN8;
+    read |= UART0_LCR_H_WLEN8 | UART0_LCR_H_FEN;
     dsb();
     mmioWrite(UART0_LCR_H, read);
 
