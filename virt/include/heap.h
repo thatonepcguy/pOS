@@ -13,3 +13,4 @@
 void initHeap(paddr_t __heap);
 
 void *kalloc(uint64_t bytes);
+void kfree(void *adr);

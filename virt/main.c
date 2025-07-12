@@ -28,13 +28,10 @@ void main(void) {
 
     // init and test heap
     initHeap((paddr_t)__heap);
-    char *ptr = kalloc(129);
-    kprintf("0x%x\r\n", (uint64_t)ptr);
 
     int c;
-
     while(1) {
         if ((c = uartGetc()) != -1)
-            uartPutc((char)c);
+            kprintf("<%c><%d>\r\n", (char)c, c);
     }
 }

@@ -26,6 +26,12 @@ void kprintf(const char *fmt, ...) {
                     }
                     break;
                 }
+
+                case 'c': {// char
+                    const char c = va_arg(vargs, int);
+                    uartPutc(c);
+                    break;
+                }
                 
                 case 'd': {// integer in decimal
                     int value = va_arg(vargs, int);
@@ -54,6 +60,10 @@ void kprintf(const char *fmt, ...) {
                         uint64_t nibble = (value >> (i*4)) & 0xf;
                         uartPutc("0123456789abcdef"[nibble]);
                     }
+                    break;
+                }
+                default: {
+                    uartPutc(*fmt);
                 }
                     
             }

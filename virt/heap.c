@@ -16,13 +16,12 @@ void initHeap(paddr_t __heap) {
     heapRamBegin = __heap;
 }
 
+// kernel malloc
 void *kalloc(uint64_t bytes) {
     if (bytes < CHUNK_SIZE) {
-        kprintf("Small malloc\r\n");
         bytes = CHUNK_SIZE;
     }
     bytes = pow2RoundUp(bytes);
-    kprintf("New Size: %d\r\n", bytes);
 
     uint32_t levelToLook = (LEVELS-1)-bitscan(bytes/128);
     uint32_t currentLevel = levelToLook;
@@ -57,9 +56,47 @@ void *kalloc(uint64_t bytes) {
     }
     uint64_t offset = (indexFound * (CHUNK_SIZE<<((LEVELS-1)-currentLevel)));
     heapNodes[levelOffset(currentLevel) + indexFound] |= ALLOCATOR_NODE_ALLOCATED;
-    uint8_t *adr =(uint8_t *)(heapRamBegin + offset);
+    void *adr = (void *)(heapRamBegin + offset);
 
-    memset(adr, 0, bytes);
     return adr;
 }
 
+// kernel free
+void kfree(void *adr) {
+
+    uint32_t levelToLook = (LEVELS-1);
+    uint32_t currentLevel = levelToLook;
+    uint64_t offsetInHeap = (uint64_t)adr - heapRamBegin;
+    uint32_t indexInTree = offsetInHeap / (CHUNK_SIZE<<((LEVELS-1)-currentLevel));
+
+    bool pairFound = false;
+    bool foundStart = false;
+    do {
+        // i dont wanna store extra metadata so im sacrificing an ever so slight amount of speed for less storage and complexity
+        if (!is_aligned(offsetInHeap, (CHUNK_SIZE<<((LEVELS-1)-currentLevel))) && !foundStart)
+            kpanic("Invalid Heap Free");
+        // if its not valid but its aligned we step down a level cause this node is invalid
+        if (!(heapNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
+            indexInTree = indexInTree >> 1;
+            currentLevel--;
+            continue;
+        } else if ((heapNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
+            foundStart = true;
+        }
+
+        // FREE CURRENT NODE
+        heapNodes[levelOffset(currentLevel) + indexInTree] &= 0;
+        heapNodes[levelOffset(currentLevel) + indexInTree] |= ALLOCATOR_NODE_VALID;
+        if (!(heapNodes[levelOffset(currentLevel) + (indexInTree ^ 1)] & ALLOCATOR_NODE_SPLIT) && !(heapNodes[levelOffset(currentLevel) + (indexInTree ^ 1)] & ALLOCATOR_NODE_ALLOCATED) && currentLevel > 0) { // CHECK IF BUDDY IS AVAILABLE
+            // DE-VALID BOTH AND STEP DOWN A LEVEL
+            heapNodes[levelOffset(currentLevel) + (indexInTree ^ 1)] &= 0;
+            heapNodes[levelOffset(currentLevel) + indexInTree] &= 0;
+            // DIVIDE BY 2 TO GET THE INDEX IN THE LEVEL ABOVE
+            indexInTree = indexInTree >> 1;
+            currentLevel--;
+            pairFound = true;
+        } else {
+            pairFound = false;
+        }
+    } while (pairFound);
+}
