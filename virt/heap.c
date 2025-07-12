@@ -45,7 +45,8 @@ void *kalloc(uint64_t bytes) {
     } while (!memoryFound);
     
     while (currentLevel < levelToLook) {
-        heapNodes[levelOffset(currentLevel) + indexFound] |= ALLOCATOR_NODE_SPLIT | ALLOCATOR_NODE_VALID;
+        heapNodes[levelOffset(currentLevel) + indexFound] |= ALLOCATOR_NODE_SPLIT;
+        heapNodes[levelOffset(currentLevel) + indexFound] |= ALLOCATOR_NODE_VALID;
         if (currentLevel < (LEVELS-1)) {
             heapNodes[levelOffset(currentLevel+1) + 2*indexFound] |= ALLOCATOR_NODE_VALID;
             heapNodes[levelOffset(currentLevel+1) + 2*indexFound+1] |= ALLOCATOR_NODE_VALID;
@@ -99,4 +100,53 @@ void kfree(void *adr) {
             pairFound = false;
         }
     } while (pairFound);
+}
+
+void *krealloc(void *adr, size_t resBytes) {
+    if (adr == NULL) 
+        return kalloc(resBytes);
+    if (resBytes == 0) {
+        kfree(adr);
+        return NULL;
+    }
+    if (resBytes < 128) 
+        resBytes = 128;
+
+    resBytes = pow2RoundUp(resBytes);
+    
+    // find initial size of adr
+    uint32_t levelToLook = (LEVELS-1);
+    uint32_t currentLevel = levelToLook;
+    uint64_t offsetInHeap = (uint64_t)adr - heapRamBegin;
+    uint32_t indexInTree = offsetInHeap / (CHUNK_SIZE<<((LEVELS-1)-currentLevel));
+
+    bool foundStart = false;
+    
+     do {
+        // i dont wanna store extra metadata so im sacrificing an ever so slight amount of speed for less storage and complexity
+        if (!is_aligned(offsetInHeap, (CHUNK_SIZE<<((LEVELS-1)-currentLevel))) && !foundStart)
+            kpanic("Invalid Heap Realloc");
+        // if its not valid but its aligned we step down a level cause this node is invalid
+        if (!(heapNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
+            indexInTree = indexInTree >> 1;
+            currentLevel--;
+            continue;
+        } else if ((heapNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
+            foundStart = true;
+        } 
+        
+    } while (!foundStart);
+
+    size_t oldSize = (CHUNK_SIZE<<((LEVELS-1)-currentLevel));
+    uint8_t *newAdr = kalloc(resBytes);
+
+
+    if (oldSize <= resBytes) {
+        memcpy(newAdr, adr, oldSize);
+    } else if (oldSize > resBytes) {
+        memcpy(newAdr, adr, resBytes);
+    }
+
+    kfree(adr);
+    return newAdr;
 }

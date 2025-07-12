@@ -26,10 +26,11 @@ void main(void) {
     kprintf("Kernel Start: 0x%x\r\n", (uint64_t)__kernel);
     kprintf("Heap Start: 0x%x\r\n", (uint64_t)__heap);
 
-    // init and test heap
+    // init heap
     initHeap((paddr_t)__heap);
 
     int c;
+
     while(1) {
         if ((c = uartGetc()) != -1)
             kprintf("<%c><%d>\r\n", (char)c, c);
