@@ -40,4 +40,11 @@ SECTIONS {
         . += 16*1024*1024; /* 16 MB*/
         __heap_end = .;
     }
+
+    .ram : ALIGN(1024*64/* 1 Page (64 KB) */) {
+        __kernel_end = .;
+        __ram = .;
+        . += 1024 * 1024 * 1024; /* 1GB */
+        __ram_end = .;
+    }
 }

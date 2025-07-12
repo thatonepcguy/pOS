@@ -2,7 +2,7 @@
 #include "heap.h"
 #include "memory.h"
 #include "kprintf.h"
-static uint8_t heapNodes[BITMAP_LENGTH];
+static uint8_t heapNodes[HEAP_BITMAP_LENGTH];
 static paddr_t heapRamBegin;
 
 static inline uint32_t levelOffset(uint32_t x) {
@@ -10,7 +10,7 @@ static inline uint32_t levelOffset(uint32_t x) {
 }
 
 void initHeap(paddr_t __heap) {
-    memset(&heapNodes, 0, BITMAP_LENGTH);
+    memset(&heapNodes, 0, HEAP_BITMAP_LENGTH);
     
     heapNodes[0] |= ALLOCATOR_NODE_VALID;
     heapRamBegin = __heap;
@@ -23,13 +23,13 @@ void *kalloc(uint64_t bytes) {
     }
     bytes = pow2RoundUp(bytes);
 
-    uint32_t levelToLook = (LEVELS-1)-bitscan(bytes/128);
+    uint32_t levelToLook = (HEAP_LEVELS-1)-bitscan(bytes/128);
     uint32_t currentLevel = levelToLook;
     uint32_t indexFound;
     bool memoryFound = false;
 
     do {
-        if (currentLevel >= LEVELS) {
+        if (currentLevel >= HEAP_LEVELS) {
             kpanic("Out Of Heap Space");
         }
         
@@ -47,7 +47,7 @@ void *kalloc(uint64_t bytes) {
     while (currentLevel < levelToLook) {
         heapNodes[levelOffset(currentLevel) + indexFound] |= ALLOCATOR_NODE_SPLIT;
         heapNodes[levelOffset(currentLevel) + indexFound] |= ALLOCATOR_NODE_VALID;
-        if (currentLevel < (LEVELS-1)) {
+        if (currentLevel < (HEAP_LEVELS-1)) {
             heapNodes[levelOffset(currentLevel+1) + 2*indexFound] |= ALLOCATOR_NODE_VALID;
             heapNodes[levelOffset(currentLevel+1) + 2*indexFound+1] |= ALLOCATOR_NODE_VALID;
             currentLevel++;
@@ -55,7 +55,7 @@ void *kalloc(uint64_t bytes) {
         // this is the same as indexFoudn *= 2 but eh 
         indexFound = indexFound << 1;
     }
-    uint64_t offset = (indexFound * (CHUNK_SIZE<<((LEVELS-1)-currentLevel)));
+    uint64_t offset = (indexFound * (CHUNK_SIZE<<((HEAP_LEVELS-1)-currentLevel)));
     heapNodes[levelOffset(currentLevel) + indexFound] |= ALLOCATOR_NODE_ALLOCATED;
     void *adr = (void *)(heapRamBegin + offset);
 
@@ -65,16 +65,16 @@ void *kalloc(uint64_t bytes) {
 // kernel free
 void kfree(void *adr) {
 
-    uint32_t levelToLook = (LEVELS-1);
+    uint32_t levelToLook = (HEAP_LEVELS-1);
     uint32_t currentLevel = levelToLook;
     uint64_t offsetInHeap = (uint64_t)adr - heapRamBegin;
-    uint32_t indexInTree = offsetInHeap / (CHUNK_SIZE<<((LEVELS-1)-currentLevel));
+    uint32_t indexInTree = offsetInHeap / (CHUNK_SIZE<<((HEAP_LEVELS-1)-currentLevel));
 
     bool pairFound = false;
     bool foundStart = false;
     do {
         // i dont wanna store extra metadata so im sacrificing an ever so slight amount of speed for less storage and complexity
-        if (!is_aligned(offsetInHeap, (CHUNK_SIZE<<((LEVELS-1)-currentLevel))) && !foundStart)
+        if (!is_aligned(offsetInHeap, (CHUNK_SIZE<<((HEAP_LEVELS-1)-currentLevel))) && !foundStart)
             kpanic("Invalid Heap Free");
         // if its not valid but its aligned we step down a level cause this node is invalid
         if (!(heapNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
@@ -115,16 +115,16 @@ void *krealloc(void *adr, size_t resBytes) {
     resBytes = pow2RoundUp(resBytes);
     
     // find initial size of adr
-    uint32_t levelToLook = (LEVELS-1);
+    uint32_t levelToLook = (HEAP_LEVELS-1);
     uint32_t currentLevel = levelToLook;
     uint64_t offsetInHeap = (uint64_t)adr - heapRamBegin;
-    uint32_t indexInTree = offsetInHeap / (CHUNK_SIZE<<((LEVELS-1)-currentLevel));
+    uint32_t indexInTree = offsetInHeap / (CHUNK_SIZE<<((HEAP_LEVELS-1)-currentLevel));
 
     bool foundStart = false;
     
      do {
         // i dont wanna store extra metadata so im sacrificing an ever so slight amount of speed for less storage and complexity
-        if (!is_aligned(offsetInHeap, (CHUNK_SIZE<<((LEVELS-1)-currentLevel))) && !foundStart)
+        if (!is_aligned(offsetInHeap, (CHUNK_SIZE<<((HEAP_LEVELS-1)-currentLevel))) && !foundStart)
             kpanic("Invalid Heap Realloc");
         // if its not valid but its aligned we step down a level cause this node is invalid
         if (!(heapNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
@@ -137,7 +137,7 @@ void *krealloc(void *adr, size_t resBytes) {
         
     } while (!foundStart);
 
-    size_t oldSize = (CHUNK_SIZE<<((LEVELS-1)-currentLevel));
+    size_t oldSize = (CHUNK_SIZE<<((HEAP_LEVELS-1)-currentLevel));
     uint8_t *newAdr = kalloc(resBytes);
 
 

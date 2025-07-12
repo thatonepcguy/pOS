@@ -2,12 +2,16 @@
 #include "memory.h"
 #include "mmio.h"
 #include "uart.h"
+#include "memAllocator.h"
 #include "string.h"
 #include "heap.h"
 #include "kprintf.h"
 
+#define BOOTSCRN
+
 extern char __bss[], __bss_end[];
 extern char __heap[], __heap_end[];
+extern char __ram[], __ram_end[];
 extern char __kernel[];
 extern char _vector_table[];
 
@@ -23,11 +27,19 @@ void main(void) {
     // init uart
     uartInit();
     txReady();
+
+    
     kprintf("Kernel Start: 0x%x\r\n", (uint64_t)__kernel);
     kprintf("Heap Start: 0x%x\r\n", (uint64_t)__heap);
+    kprintf("Ram Start: 0x%x\r\n", (uint64_t)__ram);
+    
 
     // init heap
     initHeap((paddr_t)__heap);
+
+    // init allocator
+    initAllocator((paddr_t)__ram);
+
 
     int c;
 
