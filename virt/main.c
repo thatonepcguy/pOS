@@ -3,6 +3,7 @@
 #include "mmio.h"
 #include "uart.h"
 #include "memAllocator.h"
+#include "traphandler.h"
 #include "string.h"
 #include "heap.h"
 #include "kprintf.h"

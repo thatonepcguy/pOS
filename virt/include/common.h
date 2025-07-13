@@ -15,8 +15,8 @@ typedef uint64_t size_t;
 typedef uint64_t paddr_t;
 typedef uint64_t vaddr_t;
 
-#define true 1;
-#define false 0;
+#define true 1
+#define false 0
 #define NULL ((void *) 0)
 //#define align_up(value, align) __builtin_align_up(value, align) // may not work
 #define is_aligned(ptr, align) (((uintptr_t)(ptr) & ((align) - 1)) == 0)
@@ -43,6 +43,6 @@ typedef uint64_t vaddr_t;
 #define dsb() __asm__ __volatile__("dsb sy")
 #define isb() __asm__ __volatile__("isb")
 
-size_t bitscan(size_t x);
+size_t bitscan(size_t x); 
 size_t pow2RoundUp(size_t x);
 size_t pow(size_t x, size_t power);
