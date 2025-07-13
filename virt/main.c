@@ -6,8 +6,8 @@
 #include "string.h"
 #include "heap.h"
 #include "kprintf.h"
-
-#define BOOTSCRN
+#include "timer.h"
+#include "uartLoadScreen.h"
 
 extern char __bss[], __bss_end[];
 extern char __heap[], __heap_end[];
@@ -28,18 +28,19 @@ void main(void) {
     uartInit();
     txReady();
 
-    
-    kprintf("Kernel Start: 0x%x\r\n", (uint64_t)__kernel);
-    kprintf("Heap Start: 0x%x\r\n", (uint64_t)__heap);
-    kprintf("Ram Start: 0x%x\r\n", (uint64_t)__ram);
-    
+    #ifndef BOOTSCRN
+        kprintf("Kernel Start: 0x%x\r\n", (uint64_t)__kernel);
+        kprintf("Heap Start: 0x%x\r\n", (uint64_t)__heap);
+        kprintf("Ram Start: 0x%x\r\n", (uint64_t)__ram);
+    #else 
+        displayBootScreen();
+    #endif
 
     // init heap
     initHeap((paddr_t)__heap);
 
     // init allocator
     initAllocator((paddr_t)__ram);
-
 
     int c;
 

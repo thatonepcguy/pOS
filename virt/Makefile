@@ -1,7 +1,7 @@
 # Toolchain
 CC := aarch64-none-elf-gcc
 
-SRC := boot.S main.c uart.c memory.c string.c kprintf.c trapHandlerC.c trapHandlerS.S vectors.S heap.c common.c memAllocator.c 
+SRC := boot.S main.c uart.c memory.c string.c kprintf.c trapHandlerC.c trapHandlerS.S vectors.S heap.c common.c memAllocator.c uartLoadScreen.c timer.c
 BUILD := build
 OBJS := $(patsubst %.S,$(BUILD)/%.o,$(filter %.S,$(SRC))) \
         $(patsubst %.c,$(BUILD)/%.o,$(filter %.c,$(SRC)))
