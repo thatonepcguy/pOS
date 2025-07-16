@@ -1,10 +1,10 @@
 #pragma once
 #include "common.h"
 
-#define PAGE_SIZE (1024*64)
+#define PAGE_SIZE (1024*4)
 
 #define MEM_MAX_ALLOCATE_SIZE ((1024 * 1024 * 1024) / PAGE_SIZE) /* 1GB  In Pages*/
-#define MEM_LEVELS 15 // log2(MAX_ALLOCATE_SIZE) + 1
+#define MEM_LEVELS 19 // log2(MAX_ALLOCATE_SIZE) + 1
 #define MEM_BITMAP_LENGTH ((1U << MEM_LEVELS) )
 
 #define ALLOCATOR_NODE_VALID 0x1

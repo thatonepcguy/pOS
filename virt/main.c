@@ -9,6 +9,8 @@
 #include "kprintf.h"
 #include "timer.h"
 #include "uartLoadScreen.h"
+#include "tcr_el1_Config.h"
+#include "mair_el1_memTypes.h"
 
 extern char __bss[], __bss_end[];
 extern char __heap[], __heap_end[];
@@ -29,6 +31,25 @@ void main(void) {
     uartInit();
     txReady();
 
+    // init heap
+    initHeap((paddr_t)__heap);
+
+    // init allocator
+    initAllocator((paddr_t)__ram);
+    
+    // create TTBR0 and TTBR1 Page tables
+    uint16_t asid = 0;
+    uint64_t ttbr0Page = allocPage(1);
+    uint64_t ttbr1Page = allocPage(1);
+    sysRegWrite(ttbr0_el1, (ttbr0Page & 0x0000FFFFFFFFFFFE) | (uint64_t)asid<<48); // shut up ik its "not safe"
+    sysRegWrite(ttbr1_el1, (ttbr1Page & 0x0000FFFFFFFFFFFE) | (uint64_t)asid<<48);
+
+    // set attr0 and attr1 in mair_el1 for cacheable and non cacheable mem
+    sysRegWrite(mair_el1, normalCacheableMem | (nonCacheableMem << 8));
+
+    // set tcr_el1 and sctlr_el1
+
+    
     #ifndef BOOTSCRN
         kprintf("Kernel Start: 0x%x\r\n", (uint64_t)__kernel);
         kprintf("Heap Start: 0x%x\r\n", (uint64_t)__heap);
@@ -36,12 +57,6 @@ void main(void) {
     #else 
         displayBootScreen();
     #endif
-
-    // init heap
-    initHeap((paddr_t)__heap);
-
-    // init allocator
-    initAllocator((paddr_t)__ram);
 
     int c;
 

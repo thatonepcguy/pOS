@@ -2,9 +2,10 @@
 #include "kprintf.h"
 #include "string.h"
 #include "common.h"
+#include "heap.h"
 #include "memAllocator.h"
 
-static uint8_t allocatorNodes[MEM_BITMAP_LENGTH];
+static uint8_t *allocatorNodes;
 static paddr_t allocatorRamBegin;
 
 static inline uint32_t levelOffset(uint32_t x) {
@@ -12,7 +13,9 @@ static inline uint32_t levelOffset(uint32_t x) {
 }
 
 void initAllocator(paddr_t __ram_start) {
-    memset(&allocatorNodes, 0, MEM_BITMAP_LENGTH); // why not just in case
+    allocatorNodes = kalloc(MEM_BITMAP_LENGTH);
+    kprintf("0x%x\r\n", allocatorNodes);
+    memset(allocatorNodes, 0, MEM_BITMAP_LENGTH);
     
     allocatorNodes[0] |= ALLOCATOR_NODE_VALID;
     allocatorRamBegin = __ram_start;
