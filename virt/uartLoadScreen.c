@@ -7,6 +7,7 @@
 void displayBootScreen() {
     initTimer(1, 1);
     usleep(2000000);
+    kprintf("\x1B[2J");
     kprintf("\x1B[?25l");
 
     int topRow = 1;

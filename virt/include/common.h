@@ -39,9 +39,9 @@ typedef uint64_t vaddr_t;
         __asm__ __volatile__("msr " #reg ", %0" ::"r"(__tmp));                \
     } while (0)
 
-#define dmb() __asm__ __volatile__("dmb sy")
-#define dsb() __asm__ __volatile__("dsb sy")
-#define isb() __asm__ __volatile__("isb")
+#define dmb() __asm__ __volatile__("dmb sy" ::: "memory")
+#define dsb() __asm__ __volatile__("dsb sy" ::: "memory")
+#define isb() __asm__ __volatile__("isb sy" ::: "memory")
 
 size_t bitscan(size_t x); 
 size_t pow2RoundUp(size_t x);

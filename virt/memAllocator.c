@@ -14,7 +14,6 @@ static inline uint32_t levelOffset(uint32_t x) {
 
 void initAllocator(paddr_t __ram_start) {
     allocatorNodes = kalloc(MEM_BITMAP_LENGTH);
-    kprintf("0x%x\r\n", allocatorNodes);
     memset(allocatorNodes, 0, MEM_BITMAP_LENGTH);
     
     allocatorNodes[0] |= ALLOCATOR_NODE_VALID;
