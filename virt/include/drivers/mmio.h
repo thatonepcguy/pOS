@@ -1,5 +1,5 @@
 #pragma once
-#include "common.h"
+#include "utils/common.h"
 
 static inline void mmioWrite(const uint64_t adr, uint32_t val) {
     *(volatile uint32_t *)(adr) = val;

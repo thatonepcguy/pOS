@@ -1,9 +1,9 @@
-#include "memory.h"
-#include "kprintf.h"
-#include "string.h"
-#include "common.h"
-#include "heap.h"
-#include "memAllocator.h"
+#include "utils/memory.h"
+#include "utils/kprintf.h"
+#include "utils/string.h"
+#include "utils/common.h"
+#include "memory/heap.h"
+#include "memory/memAllocator.h"
 
 static uint8_t *allocatorNodes;
 static paddr_t allocatorRamBegin;

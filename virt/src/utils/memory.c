@@ -1,5 +1,5 @@
-#include "memory.h"
-#include "common.h"
+#include "utils/memory.h"
+#include "utils/common.h"
 
 void *memset(void *buf, char c, size_t n) {
     uint8_t *p = (uint8_t *) buf;

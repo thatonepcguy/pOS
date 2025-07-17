@@ -1,18 +1,24 @@
-#include "common.h"
-#include "memory.h"
-#include "mmio.h"
-#include "uart.h"
-#include "memAllocator.h"
-#include "traphandler.h"
-#include "string.h"
-#include "heap.h"
-#include "kprintf.h"
-#include "timer.h"
-#include "uartLoadScreen.h"
-#include "tcr_el1_config.h"
-#include "sctlr_el1_config.h"
-#include "mair_el1_config.h"
-#include "virtualMemory.h"
+#include "drivers/mmio.h"
+#include "drivers/timer.h"
+#include "drivers/uart.h"
+
+#include "armv8/mair_el1_config.h"
+#include "armv8/sctlr_el1_config.h"
+#include "armv8/tcr_el1_config.h"
+
+#include "exceptions/traphandler.h"
+
+#include "memory/heap.h"
+#include "memory/memAllocator.h"
+#include "memory/virtualMemory.h"
+
+#include "misc/uartLoadScreen.h"
+
+#include "utils/common.h"
+#include "utils/kprintf.h"
+#include "utils/memory.h"
+#include "utils/string.h"
+
 
 extern char __bss[], __bss_end[];
 extern char __heap[], __heap_end[];

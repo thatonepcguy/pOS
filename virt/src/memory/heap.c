@@ -1,7 +1,7 @@
-#include "common.h"
-#include "heap.h"
-#include "memory.h"
-#include "kprintf.h"
+#include "utils/common.h"
+#include "memory/heap.h"
+#include "utils/memory.h"
+#include "utils/kprintf.h"
 static uint8_t heapNodes[HEAP_BITMAP_LENGTH];
 static paddr_t heapRamBegin;
 

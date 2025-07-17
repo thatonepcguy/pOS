@@ -1,4 +1,4 @@
-#include "common.h"
+#include "utils/common.h"
 
 size_t bitscan(size_t x) {
     if(x == 0) return 0x0;

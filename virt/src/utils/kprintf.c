@@ -1,6 +1,6 @@
-#include "common.h"
-#include "uart.h"
-#include "kprintf.h"
+#include "utils/common.h"
+#include "drivers/uart.h"
+#include "utils/kprintf.h"
 
 void kprintf(const char *fmt, ...) {
     va_list vargs;

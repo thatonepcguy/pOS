@@ -1,5 +1,5 @@
-#include "common.h"
-#include "timer.h"
+#include "utils/common.h"
+#include "drivers/timer.h"
 
 void initTimer(bool enable, bool intMask) {
     sysRegWrite(CNTP_CTL_EL0, enable|(intMask<<1));

@@ -1,8 +1,8 @@
-#include "common.h"
-#include "kprintf.h"
-#include "uartLoadScreen.h"
-#include "timer.h"
-#include "uart.h"
+#include "utils/common.h"
+#include "utils/kprintf.h"
+#include "misc/uartLoadScreen.h"
+#include "drivers/timer.h"
+#include "drivers/uart.h"
 
 void displayBootScreen() {
     initTimer(1, 1);

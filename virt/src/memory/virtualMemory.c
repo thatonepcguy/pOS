@@ -1,9 +1,9 @@
-#include "virtualMemory.h"
-#include "common.h"
-#include "memory.h"
-#include "memAllocator.h"
-#include "kprintf.h"
-#include "heap.h"
+#include "memory/virtualMemory.h"
+#include "utils/common.h"
+#include "utils/memory.h"
+#include "memory/memAllocator.h"
+#include "utils/kprintf.h"
+#include "memory/heap.h"
 
 void mapPage(vaddr_t vAddress, paddr_t pAddress, uint8_t attrIndx) {
     

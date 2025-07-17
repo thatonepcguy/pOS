@@ -1,16 +1,19 @@
 # Toolchain
 CC := aarch64-none-elf-gcc
 
-SRC := boot.S main.c uart.c memory.c string.c kprintf.c trapHandlerC.c trapHandlerS.S vectors.S heap.c common.c memAllocator.c uartLoadScreen.c timer.c virtualMemory.c
-BUILD := build
-OBJS := $(patsubst %.S,$(BUILD)/%.o,$(filter %.S,$(SRC))) \
-        $(patsubst %.c,$(BUILD)/%.o,$(filter %.c,$(SRC)))
+SRC_DIR := src
+BUILD_DIR := build
+INCLUDE_DIR := include
 
+SRC := $(shell find $(SRC_DIR) -type f \( -name '*.c' -o -name '*.S' \))
 
-ELF := $(BUILD)/kernel.elf
-MAP := $(BUILD)/kernel.map
+OBJS := $(patsubst $(SRC_DIR)/%, $(BUILD_DIR)/%, $(SRC:.c=.o))
+OBJS := $(patsubst $(SRC_DIR)/%, $(BUILD_DIR)/%, $(OBJS:.S=.o))
 
-CFLAGS := -std=c11 -O2 -g3 -Wall -Wextra -fno-stack-protector -ffreestanding -nostdlib -Iinclude 
+ELF := $(BUILD_DIR)/kernel.elf
+MAP := $(BUILD_DIR)/kernel.map
+
+CFLAGS := -std=c11 -O2 -g3 -Wall -Wextra -fno-stack-protector -ffreestanding -nostdlib -I$(INCLUDE_DIR)
 LDFLAGS := -Wl,-Tkernel.ld,-Map=$(MAP)
 
 QEMU := qemu-system-aarch64
@@ -20,13 +23,12 @@ QEMU_MACHINE := -machine virt
 
 all: $(ELF)
 
-$(BUILD):
-	mkdir -p $(BUILD)
-
-$(BUILD)/%.o: %.c | $(BUILD)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/%.o: %.S | $(BUILD)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.S
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(ELF): $(OBJS)
@@ -36,4 +38,4 @@ run: $(ELF)
 	$(QEMU) $(QEMU_MACHINE) -kernel $(ELF) -cpu cortex-a72 -m 2048M
 
 clean:
-	rm -rf $(BUILD)
+	rm -rf $(BUILD_DIR)

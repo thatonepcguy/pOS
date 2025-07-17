@@ -1,6 +1,6 @@
-#include "uart.h"
-#include "common.h"
-#include "mmio.h"
+#include "drivers/uart.h"
+#include "utils/common.h"
+#include "drivers/mmio.h"
 
 void txReady(void) {
     while ((mmioRead(UART0_FR)&UART0_FR_BUSY) != 0);
