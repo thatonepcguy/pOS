@@ -35,3 +35,5 @@ typedef struct {
     uint64_t x0;
 } trap_t;
 
+#define ESR_EL1_EC (0b111111<<26)
+#define SVC_TRAP (0b010101<<26)
