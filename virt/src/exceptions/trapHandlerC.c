@@ -9,9 +9,8 @@ void handleTrap(trap_t *trapRegs, uint64_t esr_el1) {
         break;
     
     default:
+        kprintf("Trap Cause: %x\r\n", esr_el1);
+        while (1);
         break;
     };
-
-    kprintf("Trap Cause: %x\r\n", esr_el1);
-    while (1);
 }
