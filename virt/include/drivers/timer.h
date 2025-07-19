@@ -1,4 +1,4 @@
 #pragma once
 
-void initTimer(bool enable, bool intEnable);
+void initTimer(bool enable, bool intMask);
 void usleep(uint64_t uSec);

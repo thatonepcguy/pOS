@@ -17,7 +17,7 @@ CFLAGS := -std=c11 -O2 -g3 -Wall -Wextra -fno-stack-protector -ffreestanding -no
 LDFLAGS := -Wl,-Tkernel.ld,-Map=$(MAP)
 
 QEMU := qemu-system-aarch64
-QEMU_MACHINE := -machine virt
+QEMU_MACHINE := -machine virt,gic-version=2
 
 .PHONY: all run clean
 
@@ -35,7 +35,7 @@ $(ELF): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS)
 
 run: $(ELF)
-	$(QEMU) $(QEMU_MACHINE) -kernel $(ELF) -cpu cortex-a72 -m 2048M
+	$(QEMU) $(QEMU_MACHINE) -kernel $(ELF) -cpu cortex-a72 -m 2048M -serial mon:stdio
 
 clean:
 	rm -rf $(BUILD_DIR)

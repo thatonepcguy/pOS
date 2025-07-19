@@ -8,3 +8,4 @@
 #define PTE_ADDRESS_MASK 0x000000FFFFFFF000
 
 void mapPage(vaddr_t vAddress, paddr_t pAddress, uint8_t attrIndx);
+void demapPage(vaddr_t vAddress);

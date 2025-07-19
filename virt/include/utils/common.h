@@ -1,26 +1,12 @@
 #pragma once
-// c standard library stuff
-typedef unsigned char bool;
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef unsigned long long uint64_t;
-typedef signed char int8_t;
-typedef signed short int16_t;
-typedef signed int int32_t;
-typedef signed long long int64_t;
-typedef unsigned long uintptr_t;
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 
-typedef uint64_t size_t;
 typedef uint64_t paddr_t;
 typedef uint64_t vaddr_t;
 
-#define true 1
-#define false 0
-#define NULL ((void *) 0)
-//#define align_up(value, align) __builtin_align_up(value, align) // may not work
 #define is_aligned(ptr, align) (((uintptr_t)(ptr) & ((align) - 1)) == 0)
-//#define offsetof (type, member) __builtin_offsetof(type, member) // may not work
 #define va_list __builtin_va_list
 #define va_start __builtin_va_start
 #define va_end __builtin_va_end

@@ -25,6 +25,7 @@ extern char __heap[], __heap_end[];
 extern char __ram[], __ram_end[];
 extern char __kernel[], __kernel_end[];
 extern char _vector_table[];
+extern char __stack_top[];
 
 void main(void) {
     // turn off i and d caches (for boot)
@@ -57,7 +58,6 @@ void main(void) {
     sysRegWrite(ttbr0_el1, (ttbr0Page & 0x0000FFFFFFFFFFFE) | (uint64_t)asid<<48); // ttbr0 (lower half) of addresses is kernel space
     sysRegWrite(ttbr1_el1, (ttbr1Page & 0x0000FFFFFFFFFFFE) | (uint64_t)asid<<48);
 
-    kprintf("0x%x\r\n", sysRegRead(ttbr0_el1));
     // set attr0 and attr1 in mair_el1 for cacheable and mmio mem
     sysRegWrite(mair_el1, normalCacheableMem | (nGnRnEMem << 8));
 
@@ -70,8 +70,7 @@ void main(void) {
     for (uint64_t i = (uint64_t)__kernel; i < (uint64_t)__kernel_end; i += PAGE_SIZE) {
         mapPage(i, i, 0);
     }
-    mapPage(UART0_BASE, UART0_BASE, 1);
-    
+    mapPage(UART0_BASE, UART0_BASE, 1); 
     
     __asm__ __volatile__("tlbi vmalle1\n"
                          "dsb ish\n"
@@ -99,6 +98,6 @@ void main(void) {
 
     while(1) {
         if ((c = uartGetc()) != -1)
-            kprintf("<%c><%d>\r\n", (char)c, c);
+            kprintf(" > [%d][%c]\r\n", c, (char)c);
     }
 }

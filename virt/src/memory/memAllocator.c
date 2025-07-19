@@ -69,15 +69,13 @@ paddr_t allocPage(size_t pages) {
 }
 
 
-void deallocPage(paddr_t pAddress, size_t pages) {
-    uint32_t alignedPagesCount = pow2RoundUp(pages);
-    if (pages > MEM_MAX_ALLOCATE_SIZE || pages == 0) {
-        kpanic("Amount of Pages Requested To Deallocate is Invalid");
-    }
-    uint32_t levelToLook = (MEM_LEVELS-1)-bitscan(alignedPagesCount);
+void deallocPage(paddr_t pAddress) {
+
+    uint32_t levelToLook = (MEM_LEVELS-1);
     uint32_t currentLevel = levelToLook;
-    size_t offsetInMemory = pAddress - allocatorRamBegin;
+    uint64_t offsetInMemory = pAddress - allocatorRamBegin;
     uint32_t indexInTree = offsetInMemory / (PAGE_SIZE<<((MEM_LEVELS-1)-currentLevel));
+
 
     if ((allocatorNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_SPLIT) || !(allocatorNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID)) {
         kpanic("Deallocation Address is Invalid");
@@ -87,7 +85,20 @@ void deallocPage(paddr_t pAddress, size_t pages) {
     }
 
     bool pairFound = false;
+    bool foundStart = false;
     do {
+        // i dont wanna store extra metadata so im sacrificing an ever so slight amount of speed for less storage and complexity
+        if (!is_aligned(offsetInMemory, (PAGE_SIZE<<((MEM_LEVELS-1)-currentLevel))) && !foundStart)
+            kpanic("Invalid page Free");
+        // if its not valid but its aligned we step down a level cause this node is invalid
+        if (!(allocatorNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
+            indexInTree = indexInTree >> 1;
+            currentLevel--;
+            continue;
+        } else if ((allocatorNodes[levelOffset(currentLevel) + indexInTree] & ALLOCATOR_NODE_VALID) && !foundStart) {
+            foundStart = true;
+        }
+        
         // FREE CURRENT NODE
         allocatorNodes[levelOffset(currentLevel) + indexInTree] &= 0;
         allocatorNodes[levelOffset(currentLevel) + indexInTree] |= ALLOCATOR_NODE_VALID;

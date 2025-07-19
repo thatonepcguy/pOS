@@ -13,4 +13,4 @@
 
 void initAllocator(paddr_t __ram_start);
 paddr_t allocPage(size_t pages);
-void deallocPage(paddr_t pAddress, size_t pages);
+void deallocPage(paddr_t pAddress);
