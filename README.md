@@ -1,4 +1,4 @@
-pOS: pi-5 Operating System
+raspOS: pi-5 Operating System
 
 Current Dev State:
 MMU configured in qemu, haven't tested on real hardware yet
