@@ -40,8 +40,8 @@ void displayBootScreen() {
             }
         }
     }
-    kprintf("\x1B[%d;%dH", TERM_HEIGHT/2, TERM_WIDTH/2-2);
-    uartPuts("[pOS]");
+    kprintf("\x1B[%d;%dH", TERM_HEIGHT/2, TERM_WIDTH/2-4);
+    uartPuts("[raspOS]");
     int loadIdx = 0;
     for (int i = 0; i < LOAD_TIME; i++) {
         usleep(100000);
