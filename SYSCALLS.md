@@ -1,3 +1,6 @@
+> This document is part of raspOS and is licensed under the GNU General Public License v3.0 or later.
+> See the LICENSE file for details.
+
 # raspOS v0.1.0-alpha Syscall Table - Unfinished
 
 ```
