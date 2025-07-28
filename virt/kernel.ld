@@ -22,6 +22,9 @@
 ENTRY(_start)
 
 SECTIONS {
+    .license : {
+        KEEP(*(.license));
+    }
     . = 0x40100000;
     .text : ALIGN(4) {
         __kernel = .;

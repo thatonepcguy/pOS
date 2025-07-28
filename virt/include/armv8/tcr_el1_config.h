@@ -1,5 +1,5 @@
 /*
-    * raspOS is a custom OS designed to function on the Raspberry Pi 5.
+    * raspix is a custom OS designed to function on the Raspberry Pi 5.
     * Copyright (C) 2025  Caleb A. Jacka
     *  
     * This program is free software: you can redistribute it and/or modify
