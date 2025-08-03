@@ -1,4 +1,4 @@
-> This document is part of raspix and is licensed under the GNU General Public License v3.0.
+> This document is part of raspix and is licensed under the GNU General Public License v3.0 and later
 > See the LICENSE file for details.
 
 ## v0.1.0-alpha
